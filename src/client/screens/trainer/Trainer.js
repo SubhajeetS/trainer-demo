@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getSession } from "../services";
-import { SessionWindow, Sidebar } from "../components";
+import { getSession } from "../../services";
+import { SessionWindow, Sidebar } from "../../components";
 
 const CONTAINER = {
   display: "flex",
@@ -12,7 +12,6 @@ export default function Trainer() {
 
   useEffect(() => {
     getSession().then(session => {
-      console.log(`session: ${session}`);
       setSession(session);
     })
   }, [])
