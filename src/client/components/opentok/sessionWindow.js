@@ -52,8 +52,7 @@ const SessionConnected = ({ session }) => {
         sessionId,
         token,
         onStreamsUpdated: (streams) => {
-          console.log("some one connected");
-          setStreams(streams);
+          setStreams([...streams]);
         },
       }),
     [apiKey, sessionId, token]
@@ -74,7 +73,7 @@ const SessionConnected = ({ session }) => {
           properties={{ width: "100%", height: "100%" }}
           session={sessionHelper.session}
         />
-        {streams.map((stream) => (
+        {streams.length && streams.map((stream) => (
           <OTSubscriber
             style={CONNECTED}
             properties={{ width: "100%", height: "100%" }}
