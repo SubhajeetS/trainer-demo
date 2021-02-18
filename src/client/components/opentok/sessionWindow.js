@@ -6,6 +6,12 @@ const SESSION_CONTAINER = {
   backgroundColor: "black",
 };
 
+const CALL_CONTAINER = {
+  display: "flex",
+  flexDirection: "row",
+  height: "100%"
+}
+
 const COL = {
   flex: 1,
 };
@@ -20,8 +26,8 @@ const CONNECTED = {
   flex: 1,
   alignItems: "stretch",
   height: "100%",
-  width: "100%"
-}
+  width: "100%",
+};
 
 const SessionConnecting = () => (
   <div style={{ ...COL, ...CONNECTING }}> Connecting...</div>
@@ -45,7 +51,10 @@ const SessionConnected = ({ session }) => {
         apiKey,
         sessionId,
         token,
-        onStreamsUpdated: setStreams,
+        onStreamsUpdated: (streams) => {
+          console.log("some one connected");
+          setStreams(streams);
+        },
       }),
     [apiKey, sessionId, token]
   );
@@ -57,17 +66,25 @@ const SessionConnected = ({ session }) => {
   }, [apiKey, sessionId, token]);
 
   return (
-    <div style={CONNECTED}>
+    <>
       {error ? <SessionError error={error} /> : null}
-      <OTPublisher style={CONNECTED} properties={{ width: '100%', height: '100%' }} session={sessionHelper.session} />
-      {streams.map((stream) => (
-        <OTSubscriber
-          key={stream.id}
+      <div style={CALL_CONTAINER}>
+        <OTPublisher
+          style={CONNECTED}
+          properties={{ width: "100%", height: "100%" }}
           session={sessionHelper.session}
-          stream={stream}
         />
-      ))}
-    </div>
+        {streams.map((stream) => (
+          <OTSubscriber
+            style={CONNECTED}
+            properties={{ width: "100%", height: "100%" }}
+            key={stream.id}
+            session={sessionHelper.session}
+            stream={stream}
+          />
+        ))}
+      </div>
+    </>
   );
 };
 
