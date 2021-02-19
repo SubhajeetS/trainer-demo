@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/button";
+import { Button } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";

@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "react-bootstrap/button";
+import { Button } from "react-bootstrap";
 
 export default function Playlist({ sendSignal }) {
   return (
