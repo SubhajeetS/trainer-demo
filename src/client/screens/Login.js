@@ -23,7 +23,7 @@ export default function Login() {
     event.preventDefault();
     dispatch(login(email, password))
       .then(() => {
-        history.push("/meeting");
+        history.replace("/meeting");
       })
       .catch((err) => {
         console.error(err);
