@@ -20,7 +20,7 @@ export function Sidebar({ sendSignal }) {
     return (
         <div style={SIDEBAR_CONTAINER}>
             <div style={PLAYLIST}> <Playlist /> </div>
-            <div style={CONTROLS}> <Controls sendSignal={sendSignal}/> </div>
+            <div style={CONTROLS}> <Controls sendCommand={sendCommand}/> </div>
         </div>
     );
 }

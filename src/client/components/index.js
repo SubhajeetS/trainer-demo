@@ -1,2 +1,2 @@
-export * from "./opentok/sessionWindow";
+export * from "./opentok/callWindow";
 export * from "./sidebar";

@@ -17,7 +17,6 @@ export const getSession = () => async (dispatch, getState) => {
     throw new Error('Not logged in');
   }
 
-  console.log(tokens.access.token);
   const session = await meetingService.getSession(tokens.access.token);
 
   return dispatch({
