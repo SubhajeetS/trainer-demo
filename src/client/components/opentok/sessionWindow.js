@@ -106,8 +106,11 @@ const SessionConnected = ({ session }) => {
                 width: "100%",
                 height: "100%",
                 fitMode: "contain",
-                frameRate: 30,
-                resolution: "1280x720",
+                preferredFrameRate: 30,
+                preferredResolution: {
+                  height: 720,
+                  width: 1280,
+                },
               }}
               key={stream.id}
               session={sessionHelper.session}
