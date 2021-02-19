@@ -31,8 +31,8 @@ const CONNECTED = {
 
 const PIP = {
   position: "absolute",
-  width: "360px",
-  height: "240px",
+  width: "270px",
+  height: "200px",
   bottom: "10px",
   left: "10px",
   zIndex: 100,
@@ -89,14 +89,26 @@ const SessionConnected = ({ session }) => {
       <div style={CALL_CONTAINER}>
         <OTPublisher
           style={PUBLISHER_VIDEO}
-          properties={{ width: "100%", height: "100%", fitMode: "contain", frameRate: 30 }}
+          properties={{
+            width: "100%",
+            height: "100%",
+            fitMode: "contain",
+            frameRate: 30,
+            resolution: "1280x720",
+          }}
           session={sessionHelper.session}
         />
         {streams.length >= 1 &&
           streams.map((stream) => (
             <OTSubscriber
               style={CONNECTED}
-              properties={{ width: "100%", height: "100%", fitMode: "contain" }}
+              properties={{
+                width: "100%",
+                height: "100%",
+                fitMode: "contain",
+                frameRate: 30,
+                resolution: "1280x720",
+              }}
               key={stream.id}
               session={sessionHelper.session}
               stream={stream}
