@@ -9,8 +9,8 @@ const SESSION_CONTAINER = {
 const CALL_CONTAINER = {
   display: "flex",
   flexDirection: "row",
-  height: "100%"
-}
+  height: "100%",
+};
 
 const COL = {
   flex: 1,
@@ -27,6 +27,19 @@ const CONNECTED = {
   alignItems: "stretch",
   height: "100%",
   width: "100%",
+};
+
+const PIP = {
+  position: "absolute",
+  width: "360px",
+  height: "240px",
+  bottom: "10px",
+  left: "10px",
+  zIndex: 100,
+  borderWidth: "3px",
+  borderColor: "white",
+  bordeRadius: "3px",
+  borderStyle: "solid",
 };
 
 const SessionConnecting = () => (
@@ -60,28 +73,35 @@ const SessionConnected = ({ session }) => {
 
   useEffect(() => {
     return () => {
-      sessionHelper.disconnected();
+      sessionHelper.disconnect();
     };
   }, [apiKey, sessionId, token]);
+
+  //more than 1 user
+  let PUBLISHER_VIDEO = { ...CONNECTED };
+  if (streams.length > 1) {
+    PUBLISHER_VIDEO = { ...PUBLISHER_VIDEO, ...PIP };
+  }
 
   return (
     <>
       {error ? <SessionError error={error} /> : null}
       <div style={CALL_CONTAINER}>
         <OTPublisher
-          style={CONNECTED}
+          style={PUBLISHER_VIDEO}
           properties={{ width: "100%", height: "100%" }}
           session={sessionHelper.session}
         />
-        {streams.length && streams.map((stream) => (
-          <OTSubscriber
-            style={CONNECTED}
-            properties={{ width: "100%", height: "100%" }}
-            key={stream.id}
-            session={sessionHelper.session}
-            stream={stream}
-          />
-        ))}
+        {streams.length &&
+          streams.map((stream) => (
+            <OTSubscriber
+              style={CONNECTED}
+              properties={{ width: "100%", height: "100%" }}
+              key={stream.id}
+              session={sessionHelper.session}
+              stream={stream}
+            />
+          ))}
       </div>
     </>
   );

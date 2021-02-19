@@ -1,9 +1,10 @@
 import React from "react";
 
-export default function Playlist() {
+export default function Playlist({ sendSignal }) {
     return (
         <div>
-            Your Fancy Controls
+            <h4> Your Fancy Controls</h4>
+            <button onClick={sendSignal}> Send Signal </button>
         </div>
     );
 }
