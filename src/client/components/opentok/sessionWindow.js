@@ -89,14 +89,14 @@ const SessionConnected = ({ session }) => {
       <div style={CALL_CONTAINER}>
         <OTPublisher
           style={PUBLISHER_VIDEO}
-          properties={{ width: "100%", height: "100%" }}
+          properties={{ width: "100%", height: "100%", fitMode: "contain", frameRate: 30 }}
           session={sessionHelper.session}
         />
-        {streams.length > 1 &&
+        {streams.length >= 1 &&
           streams.map((stream) => (
             <OTSubscriber
               style={CONNECTED}
-              properties={{ width: "100%", height: "100%" }}
+              properties={{ width: "100%", height: "100%", fitMode: "contain" }}
               key={stream.id}
               session={sessionHelper.session}
               stream={stream}
