@@ -92,7 +92,7 @@ const SessionConnected = ({ session }) => {
           properties={{ width: "100%", height: "100%" }}
           session={sessionHelper.session}
         />
-        {streams.length &&
+        {streams.length > 1 &&
           streams.map((stream) => (
             <OTSubscriber
               style={CONNECTED}
