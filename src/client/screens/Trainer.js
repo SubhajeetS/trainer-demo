@@ -29,7 +29,7 @@ const TOAST_BODY = {
 export default function Trainer() {
   const session = useSelector((state) => state.meeting.session);
   const { sessionHelper, streams } = useSession(session);
-  const [isToastVisible, setToastVisibility] = useState(true);
+  const [isToastVisible, setToastVisibility] = useState(false);
   const [command, setCommand] = useState("");
 
   useEffect(() => {
