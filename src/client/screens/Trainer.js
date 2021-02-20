@@ -34,8 +34,12 @@ export default function Trainer() {
 
   useEffect(() => {
     sessionHelper.session.on("signal:command", (event) => {
-      setCommand(event.data);
-      setToastVisibility(true);
+      const myConnectionId = sessionHelper.session.connection && sessionHelper.session.connection.id;
+      // Signal received from another client
+      if (myConnectionId && event.from.connectionId != myConnectionId) {
+        setCommand(event.data);
+        setToastVisibility(true);
+      }
     });
   }, [sessionHelper.session]);
 
@@ -60,7 +64,7 @@ export default function Trainer() {
         onClose={() => setToastVisibility(false)}
         show={isToastVisible}
         autohide
-        delay={3000}
+        delay={1000}
       >
         <Toast.Header style={TOAST_HEADER}>
           <strong className="mr-auto">Trainer Says</strong>
