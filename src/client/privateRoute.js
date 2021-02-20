@@ -5,7 +5,8 @@ import { useSelector } from "react-redux";
 
 export default function PrivateRoute({ children, ...rest }) {
   const tokens = useSelector((state) => state.auth.tokens);
-  const isAuthenticated = !!tokens.access;
+  const isAuthenticated = !!tokens.access && new Date() < new Date(tokens.access.expires);
+  
   return (
     <Route
       {...rest}

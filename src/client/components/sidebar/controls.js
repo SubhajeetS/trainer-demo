@@ -1,20 +1,33 @@
 import React from "react";
 import { Button } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 
-export default function Playlist({ sendSignal }) {
+export default function Playlist({ sendCommand }) {
+  const jump = () => sendCommand("JUMP");
+  const stop = () => sendCommand("STOP");
 
-  const jump = () => sendCommand('JUMP');
-  const stop = () => sendCommand('STOP');
+  const ROW = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: 10,
+  };
 
   return (
     <div>
       <h4> Your Fancy Controls</h4>
-      <Button variant="dark" onClick={jump}>
-        Jump
-      </Button>
-      <Button variant="dark" onClick={stop}>
-        Stop
-      </Button>
+      <Row style={ROW}>
+        <Col>
+          <Button variant="dark" onClick={jump}>
+            Jump
+          </Button>
+        </Col>
+        <Col>
+          <Button variant="dark" onClick={stop}>
+            Stop
+          </Button>
+        </Col>
+      </Row>
     </div>
   );
 }

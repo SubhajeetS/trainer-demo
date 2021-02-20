@@ -7,5 +7,5 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export default createStore(
   rootReducer,
-  composeEnhancers(applyMiddleware(thunk), persistState(['auth']))
+  composeEnhancers(applyMiddleware(thunk), persistState(['auth', 'meeting']))
 );

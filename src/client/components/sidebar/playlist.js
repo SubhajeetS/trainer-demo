@@ -3,7 +3,7 @@ import React from "react";
 export default function Playlist() {
     return (
         <div>
-            Your Current Playlist
+            <h4> Your Current Playlist </h4>
         </div>
     );
 }
