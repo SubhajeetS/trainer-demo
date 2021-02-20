@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { CallWindow, Sidebar } from "../components";
 import useSession from "../components/opentok/useSession.js";
-import {Toast} from "react-bootstrap";
+import { Toast } from "react-bootstrap";
 
 const CONTAINER = {
   display: "flex",
@@ -11,19 +11,31 @@ const CONTAINER = {
 
 const TOAST = {
   position: "absolute",
-  top: 0,
-  right: 0,
+  backgroudColor: "#FDECDC",
+  top: 10,
+  right: "50%",
+  width: "100%",
+  zIndex: 1,
+};
+
+const TOAST_HEADER = {
+  backgroundColor: "#fff3cd",
+};
+
+const TOAST_BODY = {
+  backgroundColor: "#fff3cd",
 };
 
 export default function Trainer() {
   const session = useSelector((state) => state.meeting.session);
   const { sessionHelper, streams } = useSession(session);
-  const [isToastVisible, setToastVisibility] = useState(false);
+  const [isToastVisible, setToastVisibility] = useState(true);
   const [command, setCommand] = useState("");
 
   useEffect(() => {
     sessionHelper.session.on("signal:command", (event) => {
       setCommand(event.data);
+      setToastVisibility(true);
     });
   }, [sessionHelper.session]);
 
@@ -47,13 +59,13 @@ export default function Trainer() {
         style={TOAST}
         onClose={() => setToastVisibility(false)}
         show={isToastVisible}
-        delay={3000}
         autohide
+        delay={3000}
       >
-        <Toast.Header>
+        <Toast.Header style={TOAST_HEADER}>
           <strong className="mr-auto">Trainer Says</strong>
         </Toast.Header>
-        <Toast.Body> {command}</Toast.Body>
+        <Toast.Body style={TOAST_BODY}> {command}</Toast.Body>
       </Toast>
       <CallWindow sessionHelper={sessionHelper} streams={streams} />
       <Sidebar sendCommand={sendCommand} />
