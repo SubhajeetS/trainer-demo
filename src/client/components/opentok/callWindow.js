@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { OTPublisher, OTSubscriber } from "opentok-react";
 import getFilteredCanvas from "./canvas";
 
