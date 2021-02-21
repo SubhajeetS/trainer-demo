@@ -95,13 +95,7 @@ const SessionConnected = ({ sessionHelper, streams }) => {
       {showFeed && (
         <OTPublisher
           style={CONNECTED}
-          properties={{
-            width: "100%",
-            height: "100%",
-            fitMode: "contain",
-            frameRate: 30,
-            resolution: "1280x720",
-          }}
+          properties={publisherFeedOption}
           session={sessionHelper.session}
         />
       )}
