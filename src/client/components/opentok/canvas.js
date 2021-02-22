@@ -1,17 +1,18 @@
 import Filters from "./filters";
 
-export default function getFilteredCanvas(mediaStream, WIDTH = 640, HEIGHT = 480) {
-    var videoEl = document.createElement('video');
-    videoEl.srcObject = mediaStream;
-    videoEl.setAttribute('playsinline', '');
-    videoEl.muted = true;
-    setTimeout(function timeout() {
-      videoEl.play();
-    });
-    var canvas = document.createElement('canvas');
+export default function getFilteredCanvas(videoEl, canvas, WIDTH = 640, HEIGHT = 480) {
+    const mediaStream = videoEl.srcObject;
+    // var videoEl = document.createElement('video');
+    // videoEl.srcObject = mediaStream;
+    // videoEl.setAttribute('playsinline', '');
+    // videoEl.muted = true;
+    // setTimeout(function timeout() {
+    //   videoEl.play();
+    // });
+    // var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
-    canvas.width = WIDTH;
-    canvas.height = HEIGHT;
+    // canvas.width = WIDTH;
+    // canvas.height = HEIGHT;
 
     var tmpCanvas = document.createElement('canvas');
     var tmpCtx = tmpCanvas.getContext('2d');
@@ -31,10 +32,10 @@ export default function getFilteredCanvas(mediaStream, WIDTH = 640, HEIGHT = 480
       tmpCtx.drawImage(videoEl, 0, 0, tmpCanvas.width, tmpCanvas.height);
       var imgData = tmpCtx.getImageData(0, 0, tmpCanvas.width, tmpCanvas.height);
       // Apply the currently selected filter and get the new image data
-      imgData = Filters.grayscale(imgData);
+      imgData = Filters.sepia(imgData);
       // Draw the filtered image data onto the main canvas
       ctx.putImageData(imgData, 0, 0);
-
+      
       reqId = requestAnimationFrame(drawFrame);
     };
 

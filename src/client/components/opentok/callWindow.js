@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef } from "react";
 import { OTPublisher, OTSubscriber } from "opentok-react";
 import getFilteredCanvas from "./canvas";
 
@@ -55,22 +55,23 @@ const SessionConnected = ({ sessionHelper, streams }) => {
         console.log("-----------video element create-------------------");
         console.log(event.element);
         const mediaStream = event.element.srcObject;
-        const filteredCanvas = getFilteredCanvas(mediaStream);
+        const filteredCanvas = getFilteredCanvas(event.element, videoRef.current);
 
         const publisherOptions = {
           insertMode: "append",
           width: "100%",
           height: "100%",
           // Pass in the canvas stream video track as our custom videoSource
-          videoSource: filteredCanvas.canvas
-            .captureStream(30)
-            .getVideoTracks()[0],
+          // videoSource: filteredCanvas.canvas
+          //   .captureStream(30)
+          //   .getVideoTracks()[0],
           // Pass in the audio track from our underlying mediaStream as the audioSource
           // audioSource: mediaStream.getAudioTracks()[0]
         };
         // setPublisherFeedOption(publisherOptions);
         //setShowFeed(true);
-        videoRef.current.srcObject = publisherOptions.videoSource;
+        // const stream = filteredCanvas.canvas.captureStream(30).getVideoTracks()[0];
+        // videoRef.current.videoTrack = stream;
       },
       destroyed: () => {
         console.log("-----------video element destroyed-------------------");
@@ -95,21 +96,16 @@ const SessionConnected = ({ sessionHelper, streams }) => {
         }}
         session={sessionHelper.session}
       />
-      <video
+      <canvas
         ref={videoRef}
+        widht="640"
+        height="480"
         style={{
-          position: "absolute",
-          width: "270px",
-          height: "200px",
-          bottom: "10px",
-          right: "10px",
-          zIndex: 100,
-          borderWidth: "3px",
-          borderColor: "white",
-          bordeRadius: "3px",
-          borderStyle: "solid",
+          ...CONNECTED,
+          width: 640,
+          height: 480
         }}
-      ></video>
+      ></canvas>
 
       {streams.length >= 1 &&
         streams.map((stream) => (
