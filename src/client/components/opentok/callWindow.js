@@ -54,8 +54,8 @@ const SessionConnected = ({ sessionHelper, streams }) => {
       videoElementCreated: (event) => {
         console.log("-----------video element create-------------------");
         console.log(event.element);
-        const mediaStream = event.element.srcObject;
-        const filteredCanvas = getFilteredCanvas(event.element, videoRef.current);
+        console.log(videoRef.current);
+        const filteredCanvas = getFilteredCanvas(event.element);
 
         const publisherOptions = {
           insertMode: "append",
@@ -70,8 +70,9 @@ const SessionConnected = ({ sessionHelper, streams }) => {
         };
         // setPublisherFeedOption(publisherOptions);
         //setShowFeed(true);
-        // const stream = filteredCanvas.canvas.captureStream(30).getVideoTracks()[0];
-        // videoRef.current.videoTrack = stream;
+        const stream = filteredCanvas.canvas.captureStream(30);
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
       },
       destroyed: () => {
         console.log("-----------video element destroyed-------------------");
@@ -96,7 +97,7 @@ const SessionConnected = ({ sessionHelper, streams }) => {
         }}
         session={sessionHelper.session}
       />
-      <canvas
+      <video
         ref={videoRef}
         widht="640"
         height="480"
@@ -105,7 +106,7 @@ const SessionConnected = ({ sessionHelper, streams }) => {
           width: 640,
           height: 480
         }}
-      ></canvas>
+      ></video>
 
       {streams.length >= 1 &&
         streams.map((stream) => (
