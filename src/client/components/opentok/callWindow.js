@@ -1,6 +1,7 @@
-import React, { useMemo, useState, useRef } from "react";
+import React, { useMemo, useState, useRef, useEffect } from "react";
 import { OTPublisher, OTSubscriber } from "opentok-react";
 import getFilteredCanvas from "./canvas";
+import initCanvas from "../fabric/fabricCanvas";
 
 const SESSION_CONTAINER = {
   flex: 1,
@@ -29,6 +30,15 @@ const CONNECTED = {
   alignItems: "stretch",
   height: "100%",
   width: "100%",
+  position: "relative",
+};
+
+const CANVAS = {
+  position: "absolute",
+  top: 0,
+  left: 0,
+  width: "100%",
+  height: "100%",
 };
 
 const PIP = {
@@ -48,6 +58,7 @@ const SessionConnected = ({ sessionHelper, streams }) => {
   const [showFeed, setShowFeed] = useState(false);
   const [publisherFeedOption, setPublisherFeedOption] = useState({});
   const videoRef = useRef();
+  const canvasRef = useRef();
 
   const eventHandlers = useMemo(
     () => ({
@@ -55,7 +66,22 @@ const SessionConnected = ({ sessionHelper, streams }) => {
         console.log("-----------video element create-------------------");
         console.log(event.element);
         console.log(videoRef.current);
-        const filteredCanvas = getFilteredCanvas(event.element);
+
+        //set video width and height
+
+        //create the fabric canvas
+        //set canvas properties
+        canvasRef.current.style.width = "100%";
+        canvasRef.current.style.height = "100%";
+        //then set the internal size to match
+        canvasRef.current.width = canvasRef.current.offsetWidth;
+        canvasRef.current.height = canvasRef.current.offsetHeight;
+        const fabricCanvas = initCanvas(canvasRef.current);
+
+        const filteredCanvas = getFilteredCanvas(
+          event.element,
+          [fabricCanvas.lowerCanvasEl, fabricCanvas.upperCanvasEl],
+        );
 
         const publisherOptions = {
           insertMode: "append",
@@ -70,6 +96,8 @@ const SessionConnected = ({ sessionHelper, streams }) => {
         };
         // setPublisherFeedOption(publisherOptions);
         //setShowFeed(true);
+
+        //stream to video
         const stream = filteredCanvas.canvas.captureStream(30);
         videoRef.current.srcObject = stream;
         videoRef.current.play();
@@ -97,45 +125,36 @@ const SessionConnected = ({ sessionHelper, streams }) => {
         }}
         session={sessionHelper.session}
       />
-      <video
-        ref={videoRef}
-        widht="640"
-        height="480"
-        style={{
-          ...CONNECTED,
-          width: 640,
-          height: 480
-        }}
-      ></video>
-      {/* <canvas
-        ref={videoRef}
-        widht="640"
-        height="480"
-        style={{
-          ...CONNECTED,
-          width: 640,
-          height: 480,
-        }}
-      ></canvas> */}
+      <div style={CONNECTED}>
+        <video ref={videoRef}></video>
+      </div>
       {streams.length >= 1 &&
         streams.map((stream) => (
-          <OTSubscriber
-            style={CONNECTED}
-            properties={{
-              width: "100%",
-              height: "100%",
-              fitMode: "contain",
-              preferredFrameRate: 30,
-              preferredResolution: {
-                height: 720,
-                width: 1280,
-              },
-            }}
-            eventHandlers={eventHandlers}
-            key={stream.id}
-            session={sessionHelper.session}
-            stream={stream}
-          />
+          <div style={CONNECTED}>
+            <OTSubscriber
+              style={CONNECTED}
+              properties={{
+                width: "100%",
+                height: "100%",
+                preferredFrameRate: 30,
+                fitMode: "contain",
+                preferredResolution: {
+                  height: 720,
+                  width: 1280,
+                },
+              }}
+              eventHandlers={eventHandlers}
+              key={stream.id}
+              session={sessionHelper.session}
+              stream={stream}
+            />
+            <canvas
+              ref={canvasRef}
+              width="640"
+              height="480"
+              style={CANVAS}
+            ></canvas>
+          </div>
         ))}
     </div>
   );
