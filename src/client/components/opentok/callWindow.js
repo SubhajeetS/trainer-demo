@@ -60,28 +60,44 @@ const SessionConnected = ({ sessionHelper, streams }) => {
   const videoRef = useRef();
   const canvasRef = useRef();
 
+  useEffect(() => {
+    console.log("------------canvas resizing-------------------");
+    if (canvasRef.current) {
+      //set canvas properties
+      canvasRef.current.style.width = "100%";
+      canvasRef.current.style.height = "100%";
+      //then set the internal size to match
+      canvasRef.current.width = canvasRef.current.offsetWidth;
+      canvasRef.current.height = canvasRef.current.offsetHeight;
+    }
+  });
+
+  useEffect(() => {
+    console.log("------------video resizing-------------------");
+    if (videoRef.current) {
+      //set canvas properties
+      videoRef.current.style.width = "100%";
+      videoRef.current.style.height = "100%";
+      //then set the internal size to match
+      videoRef.current.width = videoRef.current.offsetWidth;
+      videoRef.current.height = videoRef.current.offsetHeight;
+    }
+  });
+
   const eventHandlers = useMemo(
     () => ({
       videoElementCreated: (event) => {
-        console.log("-----------video element create-------------------");
+        console.log("-----------video element created-------------------");
         console.log(event.element);
         console.log(videoRef.current);
-
-        //set video width and height
-
         //create the fabric canvas
-        //set canvas properties
-        canvasRef.current.style.width = "100%";
-        canvasRef.current.style.height = "100%";
-        //then set the internal size to match
-        canvasRef.current.width = canvasRef.current.offsetWidth;
-        canvasRef.current.height = canvasRef.current.offsetHeight;
+
         const fabricCanvas = initCanvas(canvasRef.current);
 
-        const filteredCanvas = getFilteredCanvas(
-          event.element,
-          [fabricCanvas.lowerCanvasEl, fabricCanvas.upperCanvasEl],
-        );
+        const filteredCanvas = getFilteredCanvas(event.element, [
+          fabricCanvas.lowerCanvasEl,
+          fabricCanvas.upperCanvasEl,
+        ]);
 
         const publisherOptions = {
           insertMode: "append",
