@@ -11,6 +11,7 @@ const CALL_CONTAINER = {
   display: "flex",
   flexDirection: "row",
   height: "100%",
+  position: "relative",
 };
 
 const COL = {
@@ -46,6 +47,7 @@ const PIP = {
 const SessionConnected = ({ sessionHelper, streams }) => {
   const [showFeed, setShowFeed] = useState(false);
   const [publisherFeedOption, setPublisherFeedOption] = useState({});
+  const videoRef = useRef();
 
   const eventHandlers = useMemo(
     () => ({
@@ -66,8 +68,9 @@ const SessionConnected = ({ sessionHelper, streams }) => {
           // Pass in the audio track from our underlying mediaStream as the audioSource
           // audioSource: mediaStream.getAudioTracks()[0]
         };
-        setPublisherFeedOption(publisherOptions);
-        setShowFeed(true);
+        // setPublisherFeedOption(publisherOptions);
+        //setShowFeed(true);
+        videoRef.current.srcObject = publisherOptions.videoSource;
       },
       destroyed: () => {
         console.log("-----------video element destroyed-------------------");
@@ -92,13 +95,22 @@ const SessionConnected = ({ sessionHelper, streams }) => {
         }}
         session={sessionHelper.session}
       />
-      {showFeed && (
-        <OTPublisher
-          style={CONNECTED}
-          properties={publisherFeedOption}
-          session={sessionHelper.session}
-        />
-      )}
+      <video
+        ref={videoRef}
+        style={{
+          position: "absolute",
+          width: "270px",
+          height: "200px",
+          bottom: "10px",
+          right: "10px",
+          zIndex: 100,
+          borderWidth: "3px",
+          borderColor: "white",
+          bordeRadius: "3px",
+          borderStyle: "solid",
+        }}
+      ></video>
+
       {streams.length >= 1 &&
         streams.map((stream) => (
           <OTSubscriber
