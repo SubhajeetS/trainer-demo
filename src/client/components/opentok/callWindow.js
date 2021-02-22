@@ -107,7 +107,16 @@ const SessionConnected = ({ sessionHelper, streams }) => {
           height: 480
         }}
       ></video>
-
+      {/* <canvas
+        ref={videoRef}
+        widht="640"
+        height="480"
+        style={{
+          ...CONNECTED,
+          width: 640,
+          height: 480,
+        }}
+      ></canvas> */}
       {streams.length >= 1 &&
         streams.map((stream) => (
           <OTSubscriber
