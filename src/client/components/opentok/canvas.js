@@ -17,7 +17,7 @@ export default function getFilteredCanvas(videoEl, canvases, WIDTH = 640, HEIGHT
   var drawFrame = function drawFrame() {
     ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
     canvases.forEach(c => {
-      ctx.drawImage(c, 0, 0);
+      ctx.drawImage(c, 0, 0, canvas.width, canvas.height);
     })
     reqId = requestAnimationFrame(drawFrame);
   };

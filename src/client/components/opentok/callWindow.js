@@ -35,10 +35,10 @@ const CONNECTED = {
 
 const CANVAS = {
   position: "absolute",
-  top: 0,
+  top: 290,
   left: 0,
   width: "100%",
-  height: "100%",
+  height: "440px",
 };
 
 const PIP = {
@@ -65,10 +65,10 @@ const SessionConnected = ({ sessionHelper, streams }) => {
     if (canvasRef.current) {
       //set canvas properties
       canvasRef.current.style.width = "100%";
-      canvasRef.current.style.height = "100%";
+      // canvasRef.current.style.height = "100%";
       //then set the internal size to match
       canvasRef.current.width = canvasRef.current.offsetWidth;
-      canvasRef.current.height = canvasRef.current.offsetHeight;
+      // canvasRef.current.height = canvasRef.current.offsetHeight;
     }
   });
 
@@ -88,16 +88,24 @@ const SessionConnected = ({ sessionHelper, streams }) => {
     () => ({
       videoElementCreated: (event) => {
         console.log("-----------video element created-------------------");
-        console.log(event.element);
-        console.log(videoRef.current);
+        console.log(
+          `width = ${event.element.videoWidth}, height=${event.element.videoHeight}`
+        );
         //create the fabric canvas
+        event.element.addEventListener("resize", function resize() {
+          console.log(
+            `width = ${event.element.videoWidth}, height=${event.element.videoHeight}`
+          );
+        });
 
         const fabricCanvas = initCanvas(canvasRef.current);
 
-        const filteredCanvas = getFilteredCanvas(event.element, [
-          fabricCanvas.lowerCanvasEl,
-          fabricCanvas.upperCanvasEl,
-        ]);
+        const filteredCanvas = getFilteredCanvas(
+          event.element,
+          [fabricCanvas.lowerCanvasEl, fabricCanvas.upperCanvasEl],
+          canvasRef.current.width,
+          canvasRef.current.height
+        );
 
         const publisherOptions = {
           insertMode: "append",
@@ -167,7 +175,7 @@ const SessionConnected = ({ sessionHelper, streams }) => {
             <canvas
               ref={canvasRef}
               width="640"
-              height="480"
+              height="440"
               style={CANVAS}
             ></canvas>
           </div>
