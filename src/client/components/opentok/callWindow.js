@@ -63,7 +63,10 @@ const SessionConnected = ({ sessionHelper, streams, feedbackStarted }) => {
     resolution: "1280x720",
   });
 
+  const [test, setTest] = useState(true);
+
   const canvasRef = useRef();
+  const fabricCanvasRef = useRef();
   const videoRef = useRef();
   const publisherRef = useRef();
 
@@ -72,10 +75,10 @@ const SessionConnected = ({ sessionHelper, streams, feedbackStarted }) => {
     console.log("------------canvas resizing-------------------");
     if (canvasRef.current) {
       //set canvas properties
-      canvasRef.current.style.width = "100%";
+      //canvasRef.current.style.width = "100%";
       // canvasRef.current.style.height = "100%";
       //then set the internal size to match
-      canvasRef.current.width = canvasRef.current.offsetWidth;
+      //canvasRef.current.width = canvasRef.current.offsetWidth;
       // canvasRef.current.height = canvasRef.current.offsetHeight;
     }
   });
@@ -84,10 +87,11 @@ const SessionConnected = ({ sessionHelper, streams, feedbackStarted }) => {
     if (feedbackStarted !== undefined) {
       if (feedbackStarted) {
         //stop camera stream
-        publisherRef.current.getPublisher().publishVideo(false);
+        // publisherRef.current.getPublisher().publishVideo(false);
 
         //create canvas
-        const fabricCanvas = initCanvas(canvasRef.current);
+        fabricCanvasRef.current = initCanvas(canvasRef.current);
+        const fabricCanvas = fabricCanvasRef.current;
         const filteredCanvas = getFilteredCanvas(
           videoRef.current,
           [fabricCanvas.lowerCanvasEl, fabricCanvas.upperCanvasEl],
@@ -100,6 +104,8 @@ const SessionConnected = ({ sessionHelper, streams, feedbackStarted }) => {
           width: "100%",
           height: "100%",
           fitMode: "contain",
+          frameRate: 30,
+          resolution: "1280x720",
           // Pass in the canvas stream video track as our custom videoSource
           videoSource: filteredCanvas.canvas
             .captureStream(30)
@@ -109,6 +115,7 @@ const SessionConnected = ({ sessionHelper, streams, feedbackStarted }) => {
         };
         setPublisherProps(publisherOptions);
       } else {
+        fabricCanvasRef.current.dispose();
         const publisherOptions = {
           width: "100%",
           height: "100%",
@@ -135,7 +142,7 @@ const SessionConnected = ({ sessionHelper, streams, feedbackStarted }) => {
   );
 
   //more than 1 user
-  let PUBLISHER_VIDEO = CONNECTED;
+  let PUBLISHER_VIDEO = { ...CONNECTED };
 
   return (
     <div style={CALL_CONTAINER}>
