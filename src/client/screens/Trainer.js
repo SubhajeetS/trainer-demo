@@ -27,10 +27,11 @@ const TOAST_BODY = {
 };
 
 export default function Trainer() {
-  const session = useSelector((state) => state.meeting.session);
-  const { sessionHelper, streams } = useSession(session);
+  const meetingDetails = useSelector((state) => state.meeting.session);
+  const { sessionHelper, streams } = useSession(meetingDetails);
   const [isToastVisible, setToastVisibility] = useState(false);
   const [command, setCommand] = useState("");
+  const [feedbackStarted, setFeedbackStarted] = useState(undefined)
 
   useEffect(() => {
     sessionHelper.session.on("signal:command", (event) => {
@@ -57,6 +58,9 @@ export default function Trainer() {
     );
   };
 
+  const startFeedback = () => setFeedbackStarted(true);
+  const stopFeedback = () => setFeedbackStarted(false);
+
   return (
     <div style={CONTAINER}>
       <Toast
@@ -71,8 +75,8 @@ export default function Trainer() {
         </Toast.Header>
         <Toast.Body style={TOAST_BODY}> {command}</Toast.Body>
       </Toast>
-      <CallWindow sessionHelper={sessionHelper} streams={streams} />
-      <Sidebar sendCommand={sendCommand} />
+      <CallWindow sessionHelper={sessionHelper} streams={streams} feedbackStarted={feedbackStarted}/>
+      <Sidebar sendCommand={sendCommand} startFeedback={startFeedback} stopFeedback={stopFeedback} />
     </div>
   );
 }

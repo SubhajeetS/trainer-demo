@@ -54,13 +54,21 @@ const PIP = {
   borderStyle: "solid",
 };
 
-const SessionConnected = ({ sessionHelper, streams }) => {
-  const [showFeed, setShowFeed] = useState(false);
-  const [publisherFeedOption, setPublisherFeedOption] = useState({});
-  const videoRef = useRef();
+const SessionConnected = ({ sessionHelper, streams, feedbackStarted }) => {
+  const [publisherProps, setPublisherProps] = useState({
+    width: "100%",
+    height: "100%",
+    fitMode: "contain",
+    frameRate: 30,
+    resolution: "1280x720",
+  });
+
   const canvasRef = useRef();
+  const videoRef = useRef();
+  const publisherRef = useRef();
 
   useEffect(() => {
+    //TODO: calculate based on the incoming video's aspect ratio
     console.log("------------canvas resizing-------------------");
     if (canvasRef.current) {
       //set canvas properties
@@ -73,58 +81,51 @@ const SessionConnected = ({ sessionHelper, streams }) => {
   });
 
   useEffect(() => {
-    console.log("------------video resizing-------------------");
-    if (videoRef.current) {
-      //set canvas properties
-      videoRef.current.style.width = "100%";
-      videoRef.current.style.height = "100%";
-      //then set the internal size to match
-      videoRef.current.width = videoRef.current.offsetWidth;
-      videoRef.current.height = videoRef.current.offsetHeight;
-    }
-  });
+    if (feedbackStarted !== undefined) {
+      if (feedbackStarted) {
+        //stop camera stream
+        publisherRef.current.getPublisher().publishVideo(false);
 
-  const eventHandlers = useMemo(
-    () => ({
-      videoElementCreated: (event) => {
-        console.log("-----------video element created-------------------");
-        console.log(
-          `width = ${event.element.videoWidth}, height=${event.element.videoHeight}`
-        );
-        //create the fabric canvas
-        event.element.addEventListener("resize", function resize() {
-          console.log(
-            `width = ${event.element.videoWidth}, height=${event.element.videoHeight}`
-          );
-        });
-
+        //create canvas
         const fabricCanvas = initCanvas(canvasRef.current);
-
         const filteredCanvas = getFilteredCanvas(
-          event.element,
+          videoRef.current,
           [fabricCanvas.lowerCanvasEl, fabricCanvas.upperCanvasEl],
           canvasRef.current.width,
           canvasRef.current.height
         );
 
+        //set new publisher options
         const publisherOptions = {
-          insertMode: "append",
           width: "100%",
           height: "100%",
+          fitMode: "contain",
           // Pass in the canvas stream video track as our custom videoSource
-          // videoSource: filteredCanvas.canvas
-          //   .captureStream(30)
-          //   .getVideoTracks()[0],
+          videoSource: filteredCanvas.canvas
+            .captureStream(30)
+            .getVideoTracks()[0],
           // Pass in the audio track from our underlying mediaStream as the audioSource
           // audioSource: mediaStream.getAudioTracks()[0]
         };
-        // setPublisherFeedOption(publisherOptions);
-        //setShowFeed(true);
+        setPublisherProps(publisherOptions);
+      } else {
+        const publisherOptions = {
+          width: "100%",
+          height: "100%",
+          fitMode: "contain",
+          frameRate: 30,
+          resolution: "1280x720",
+        };
+        setPublisherProps(publisherOptions);
+      }
+    }
+  }, [feedbackStarted]);
 
-        //stream to video
-        const stream = filteredCanvas.canvas.captureStream(30);
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
+  const eventHandlers = useMemo(
+    () => ({
+      videoElementCreated: (event) => {
+        console.log("-----------video element created-------------------");
+        videoRef.current = event.element;
       },
       destroyed: () => {
         console.log("-----------video element destroyed-------------------");
@@ -134,24 +135,16 @@ const SessionConnected = ({ sessionHelper, streams }) => {
   );
 
   //more than 1 user
-  let PUBLISHER_VIDEO = { ...CONNECTED, ...PIP };
+  let PUBLISHER_VIDEO = CONNECTED;
 
   return (
     <div style={CALL_CONTAINER}>
       <OTPublisher
+        ref={publisherRef}
         style={PUBLISHER_VIDEO}
-        properties={{
-          width: "100%",
-          height: "100%",
-          fitMode: "contain",
-          frameRate: 30,
-          resolution: "1280x720",
-        }}
+        properties={publisherProps}
         session={sessionHelper.session}
       />
-      <div style={CONNECTED}>
-        <video ref={videoRef}></video>
-      </div>
       {streams.length >= 1 &&
         streams.map((stream) => (
           <div style={CONNECTED}>

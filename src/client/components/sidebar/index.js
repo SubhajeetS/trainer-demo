@@ -16,7 +16,7 @@ const CONTROLS = {
   flex: 1,
 };
 
-export function Sidebar({ sendCommand }) {
+export function Sidebar(props) {
   return (
     <div style={SIDEBAR_CONTAINER}>
       <div style={PLAYLIST}>
@@ -25,7 +25,7 @@ export function Sidebar({ sendCommand }) {
       </div>
       <div style={CONTROLS}>
         {" "}
-        <Controls sendCommand={sendCommand} />{" "}
+        <Controls {...props} />{" "}
       </div>
     </div>
   );
