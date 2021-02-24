@@ -1,9 +1,9 @@
 import { fabric } from "fabric";
 
-export default function initCanvas(elem) {
+export default function initCanvas(elem, isDrawingMode) {
   //initialize canvas element
   const canvas = new fabric.Canvas(elem, {
-    isDrawingMode: true,
+    isDrawingMode,
     objectCaching: false
   });
 
@@ -14,10 +14,7 @@ export default function initCanvas(elem) {
 
   //set brush properties
   canvas.freeDrawingBrush.color = "red";
-  // if (brush.getPatternSrc) {
-  //   brush.source = brush.getPatternSrc.call(brush);
-  // }
-  canvas.freeDrawingBrush.width = 2;
+  canvas.freeDrawingBrush.width = 1;
 
   return canvas;
 }

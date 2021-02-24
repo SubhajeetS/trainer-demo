@@ -31,7 +31,7 @@ export default function Trainer() {
   const { sessionHelper, streams } = useSession(meetingDetails);
   const [isToastVisible, setToastVisibility] = useState(false);
   const [command, setCommand] = useState("");
-  const [feedbackStarted, setFeedbackStarted] = useState(undefined)
+  const [isDrawing, setIsDrawing] = useState(false)
 
   useEffect(() => {
     sessionHelper.session.on("signal:command", (event) => {
@@ -58,8 +58,7 @@ export default function Trainer() {
     );
   };
 
-  const startFeedback = () => setFeedbackStarted(true);
-  const stopFeedback = () => setFeedbackStarted(false);
+  const toggleDrawing = () => setIsDrawing(!isDrawing);
 
   return (
     <div style={CONTAINER}>
@@ -75,8 +74,8 @@ export default function Trainer() {
         </Toast.Header>
         <Toast.Body style={TOAST_BODY}> {command}</Toast.Body>
       </Toast>
-      <CallWindow sessionHelper={sessionHelper} streams={streams} feedbackStarted={feedbackStarted}/>
-      <Sidebar sendCommand={sendCommand} startFeedback={startFeedback} stopFeedback={stopFeedback} />
+      <CallWindow sessionHelper={sessionHelper} streams={streams} isDrawing={isDrawing}/>
+      <Sidebar sendCommand={sendCommand} toggleDrawing={toggleDrawing} isDrawing={isDrawing}/>
     </div>
   );
 }

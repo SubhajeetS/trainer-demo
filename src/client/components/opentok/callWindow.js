@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useRef, useEffect } from "react";
 import { OTPublisher, OTSubscriber } from "opentok-react";
 import getFilteredCanvas from "./canvas";
-import initCanvas from "../fabric/fabricCanvas";
+import CanvasContainer from "../fabric/canvasContainer";
 
 const SESSION_CONTAINER = {
   flex: 1,
@@ -15,30 +15,12 @@ const CALL_CONTAINER = {
   position: "relative",
 };
 
-const COL = {
-  flex: 1,
-};
-
-const CONNECTING = {
-  color: "white",
-  textAlign: "center",
-  alignItems: "stretch",
-};
-
 const CONNECTED = {
   flex: 1,
   alignItems: "stretch",
   height: "100%",
   width: "100%",
   position: "relative",
-};
-
-const CANVAS = {
-  position: "absolute",
-  top: 290,
-  left: 0,
-  width: "100%",
-  height: "440px",
 };
 
 const PIP = {
@@ -54,79 +36,45 @@ const PIP = {
   borderStyle: "solid",
 };
 
-const SessionConnected = ({ sessionHelper, streams, feedbackStarted }) => {
-  const [publisherProps, setPublisherProps] = useState({
-    width: "100%",
-    height: "100%",
-    fitMode: "contain",
-    frameRate: 30,
-    resolution: "1280x720",
-  });
+const DEFAULT_PUBLISHER_PROPS = {
+  width: "100%",
+  height: "100%",
+  fitMode: "contain",
+  frameRate: 30,
+  resolution: "1280x720",
+};
 
-  const [test, setTest] = useState(true);
+const SessionConnected = ({ sessionHelper, streams, isDrawing }) => {
+  const [publisherProps, setPublisherProps] = useState(DEFAULT_PUBLISHER_PROPS);
+  const [videoDimensions, setVideoDimensions] = useState({});
 
-  const canvasRef = useRef();
-  const fabricCanvasRef = useRef();
   const videoRef = useRef();
   const publisherRef = useRef();
 
   useEffect(() => {
-    //TODO: calculate based on the incoming video's aspect ratio
-    console.log("------------canvas resizing-------------------");
-    if (canvasRef.current) {
-      //set canvas properties
-      //canvasRef.current.style.width = "100%";
-      // canvasRef.current.style.height = "100%";
-      //then set the internal size to match
-      //canvasRef.current.width = canvasRef.current.offsetWidth;
-      // canvasRef.current.height = canvasRef.current.offsetHeight;
+    if (feedbackStarted) {
+      const filteredCanvas = getFilteredCanvas(
+        videoRef.current,
+        [fabricCanvas.lowerCanvasEl, fabricCanvas.upperCanvasEl],
+        canvasRef.current.width,
+        canvasRef.current.height
+      );
+
+      //set new publisher options
+      const publisherOptions = {
+        ...DEFAULT_PUBLISHER_PROPS,
+        // Pass in the canvas stream video track as our custom videoSource
+        videoSource: filteredCanvas.canvas
+          .captureStream(30)
+          .getVideoTracks()[0],
+        // Pass in the audio track from our underlying mediaStream as the audioSource
+        // audioSource: mediaStream.getAudioTracks()[0]
+      };
+      setPublisherProps(publisherOptions);
+    } else {
+      setPublisherProps(DEFAULT_PUBLISHER_PROPS);
     }
-  });
-
-  useEffect(() => {
-    if (feedbackStarted !== undefined) {
-      if (feedbackStarted) {
-        //stop camera stream
-        // publisherRef.current.getPublisher().publishVideo(false);
-
-        //create canvas
-        fabricCanvasRef.current = initCanvas(canvasRef.current);
-        const fabricCanvas = fabricCanvasRef.current;
-        const filteredCanvas = getFilteredCanvas(
-          videoRef.current,
-          [fabricCanvas.lowerCanvasEl, fabricCanvas.upperCanvasEl],
-          canvasRef.current.width,
-          canvasRef.current.height
-        );
-
-        //set new publisher options
-        const publisherOptions = {
-          width: "100%",
-          height: "100%",
-          fitMode: "contain",
-          frameRate: 30,
-          resolution: "1280x720",
-          // Pass in the canvas stream video track as our custom videoSource
-          videoSource: filteredCanvas.canvas
-            .captureStream(30)
-            .getVideoTracks()[0],
-          // Pass in the audio track from our underlying mediaStream as the audioSource
-          // audioSource: mediaStream.getAudioTracks()[0]
-        };
-        setPublisherProps(publisherOptions);
-      } else {
-        fabricCanvasRef.current.dispose();
-        const publisherOptions = {
-          width: "100%",
-          height: "100%",
-          fitMode: "contain",
-          frameRate: 30,
-          resolution: "1280x720",
-        };
-        setPublisherProps(publisherOptions);
-      }
-    }
-  }, [feedbackStarted]);
+  }, [isDrawing]);
 
   const eventHandlers = useMemo(
     () => ({
@@ -135,14 +83,18 @@ const SessionConnected = ({ sessionHelper, streams, feedbackStarted }) => {
         videoRef.current = event.element;
       },
       destroyed: () => {
-        console.log("-----------video element destroyed-------------------");
+        console.log("-----------video element destroyed-----------------");
+        videoRef.current = null;
       },
     }),
     []
   );
 
   //more than 1 user
-  let PUBLISHER_VIDEO = { ...CONNECTED };
+  let PUBLISHER_VIDEO = CONNECTED;
+  if (streams.length && !isDrawing) {
+    PUBLISHER_VIDEO = { ...CONNECTED, ...PIP };
+  }
 
   return (
     <div style={CALL_CONTAINER}>
@@ -172,12 +124,10 @@ const SessionConnected = ({ sessionHelper, streams, feedbackStarted }) => {
               session={sessionHelper.session}
               stream={stream}
             />
-            <canvas
-              ref={canvasRef}
-              width="640"
-              height="440"
-              style={CANVAS}
-            ></canvas>
+            <CanvasContainer
+              {...videoDimensions}
+              isDrawing={false}
+            />
           </div>
         ))}
     </div>
