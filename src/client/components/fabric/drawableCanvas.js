@@ -12,6 +12,10 @@ export default React.forwardRef(function DrawableCanvas(
   useEffect(() => {
     if (fabricCanvasRef.current) {
       fabricCanvasRef.current.isDrawingMode = isDrawing;
+      //TODO: find a better way
+      if(!isDrawing) {
+        fabricCanvasRef.current.clear();
+      }
     }
   }, [isDrawing]);
 

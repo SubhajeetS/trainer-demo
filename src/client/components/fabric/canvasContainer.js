@@ -40,14 +40,6 @@ export default React.forwardRef(function CanvasContainer(props, ref) {
 
   const [dimensionsListener, dimensions] = useResizeAware();
 
-  //TODO: add window resize handler like this:
-  //https://stackoverflow.com/questions/43817118/how-to-get-the-width-of-a-react-element
-  // useEffect(() => {
-  //   console.log("----------------- calculating dimensions------------------");
-  //   const { offsetWidth: width, offsetHeight: height } = containerRef.current;
-  //   setDimensions({ width, height });
-  // }, [dimensions]);
-
   useEffect(() => {
     const videoAspectRatio = videoWidth / videoHeight;
     const width = dimensions.width;

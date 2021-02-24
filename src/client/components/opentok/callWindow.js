@@ -72,10 +72,10 @@ const SessionConnected = ({ sessionHelper, streams, isDrawing }) => {
       };
       setPublisherProps(publisherOptions);
     } else {
-      setPublisherProps(DEFAULT_PUBLISHER_PROPS);
       if (filteredCanvasRef.current) {
         filteredCanvasRef.current.stop();
       }
+      setPublisherProps(DEFAULT_PUBLISHER_PROPS);
     }
   }, [isDrawing]);
 
