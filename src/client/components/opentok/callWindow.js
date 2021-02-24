@@ -48,23 +48,23 @@ const SessionConnected = ({ sessionHelper, streams, isDrawing }) => {
   const [publisherProps, setPublisherProps] = useState(DEFAULT_PUBLISHER_PROPS);
   const [videoDimensions, setVideoDimensions] = useState({});
 
-  const videoRef = useRef();
-  const publisherRef = useRef();
+  const videoRef = useRef(null);
+  const publisherRef = useRef(null);
+  const canvasRef = useRef(null);
+  const filteredCanvasRef = useRef(null);
 
   useEffect(() => {
-    if (feedbackStarted) {
-      const filteredCanvas = getFilteredCanvas(
-        videoRef.current,
-        [fabricCanvas.lowerCanvasEl, fabricCanvas.upperCanvasEl],
-        canvasRef.current.width,
-        canvasRef.current.height
-      );
+    if (isDrawing) {
+      filteredCanvasRef.current = getFilteredCanvas(videoRef.current, [
+        canvasRef.current.lowerCanvasEl,
+        canvasRef.current.upperCanvasEl,
+      ]);
 
       //set new publisher options
       const publisherOptions = {
         ...DEFAULT_PUBLISHER_PROPS,
         // Pass in the canvas stream video track as our custom videoSource
-        videoSource: filteredCanvas.canvas
+        videoSource: filteredCanvasRef.current.canvas
           .captureStream(30)
           .getVideoTracks()[0],
         // Pass in the audio track from our underlying mediaStream as the audioSource
@@ -73,8 +73,22 @@ const SessionConnected = ({ sessionHelper, streams, isDrawing }) => {
       setPublisherProps(publisherOptions);
     } else {
       setPublisherProps(DEFAULT_PUBLISHER_PROPS);
+      if (filteredCanvasRef.current) {
+        filteredCanvasRef.current.stop();
+      }
     }
   }, [isDrawing]);
+
+  useEffect(() => {
+    console.log(`----------------streams updated----------------------`);
+    if (streams && streams.length) {
+      const first = streams[0];
+      setVideoDimensions({
+        videoHeight: first.videoDimensions.height,
+        videoWidth: first.videoDimensions.width,
+      });
+    }
+  }, [streams]);
 
   const eventHandlers = useMemo(
     () => ({
@@ -126,7 +140,8 @@ const SessionConnected = ({ sessionHelper, streams, isDrawing }) => {
             />
             <CanvasContainer
               {...videoDimensions}
-              isDrawing={false}
+              isDrawing={isDrawing}
+              ref={canvasRef}
             />
           </div>
         ))}

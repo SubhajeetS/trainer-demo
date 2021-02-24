@@ -1,10 +1,12 @@
 import React, { useRef, useEffect } from "react";
 import initCanvas from "./fabricCanvas";
 
-export default function DrawableCanvas({ dimensions, isDrawing = false }) {
-  const fabricCanvasRef = useRef(null);
+export default React.forwardRef(function DrawableCanvas(
+  props,
+  fabricCanvasRef
+) {
+  const { dimensions, isDrawing = false } = props;
   const canvasRef = useRef(null);
-
   const { width = 640, height = 480 } = dimensions;
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export default function DrawableCanvas({ dimensions, isDrawing = false }) {
   };
 
   useEffect(() => {
-    if(fabricCanvasRef.current) {
+    if (fabricCanvasRef.current) {
       cleanup();
     }
     fabricCanvasRef.current = initCanvas(canvasRef.current, isDrawing);
@@ -37,4 +39,4 @@ export default function DrawableCanvas({ dimensions, isDrawing = false }) {
   }, [canvasRef.current]);
 
   return <canvas ref={canvasRef} width={width} height={height} />;
-}
+});
