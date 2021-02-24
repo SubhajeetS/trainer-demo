@@ -31,7 +31,7 @@ export default function Trainer() {
   const { sessionHelper, streams } = useSession(meetingDetails);
   const [isToastVisible, setToastVisibility] = useState(false);
   const [command, setCommand] = useState("");
-  const [isDrawing, setIsDrawing] = useState(false)
+  const [isDrawing, setIsDrawing] = useState(undefined);
 
   useEffect(() => {
     sessionHelper.session.on("signal:command", (event) => {

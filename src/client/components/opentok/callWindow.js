@@ -54,28 +54,33 @@ const SessionConnected = ({ sessionHelper, streams, isDrawing }) => {
   const filteredCanvasRef = useRef(null);
 
   useEffect(() => {
-    if (isDrawing) {
-      filteredCanvasRef.current = getFilteredCanvas(videoRef.current, [
-        canvasRef.current.lowerCanvasEl,
-        canvasRef.current.upperCanvasEl,
-      ]);
+    if (isDrawing !== undefined) {
+      const publisher = publisherRef.current.getPublisher();
+      publisher && publisher.publishVideo(false);
 
-      //set new publisher options
-      const publisherOptions = {
-        ...DEFAULT_PUBLISHER_PROPS,
-        // Pass in the canvas stream video track as our custom videoSource
-        videoSource: filteredCanvasRef.current.canvas
-          .captureStream(30)
-          .getVideoTracks()[0],
-        // Pass in the audio track from our underlying mediaStream as the audioSource
-        // audioSource: mediaStream.getAudioTracks()[0]
-      };
-      setPublisherProps(publisherOptions);
-    } else {
-      if (filteredCanvasRef.current) {
-        filteredCanvasRef.current.stop();
+      if (isDrawing) {
+        filteredCanvasRef.current = getFilteredCanvas(videoRef.current, [
+          canvasRef.current.lowerCanvasEl,
+          canvasRef.current.upperCanvasEl,
+        ]);
+
+        //set new publisher options
+        const publisherOptions = {
+          ...DEFAULT_PUBLISHER_PROPS,
+          // Pass in the canvas stream video track as our custom videoSource
+          videoSource: filteredCanvasRef.current.canvas
+            .captureStream(30)
+            .getVideoTracks()[0],
+          // Pass in the audio track from our underlying mediaStream as the audioSource
+          // audioSource: mediaStream.getAudioTracks()[0]
+        };
+        setPublisherProps(publisherOptions);
+      } else {
+        if (filteredCanvasRef.current) {
+          filteredCanvasRef.current.stop();
+        }
+        setPublisherProps(DEFAULT_PUBLISHER_PROPS);
       }
-      setPublisherProps(DEFAULT_PUBLISHER_PROPS);
     }
   }, [isDrawing]);
 
@@ -100,6 +105,18 @@ const SessionConnected = ({ sessionHelper, streams, isDrawing }) => {
         console.log("-----------video element destroyed-----------------");
         videoRef.current = null;
       },
+      disconnected: () => {
+        console.log("-----------subscriber disconnected-----------------");
+      },
+      videoDimensionsChanged: () => {
+        console.log("-----------videoDimensionsChanged -----------------");
+      }, 
+      videoDisabled: () => {
+        console.log("-----------videoDisabled -----------------");
+      },
+      videoEnabled: () => {
+        console.log("-----------videoEnabled -----------------");
+      }
     }),
     []
   );

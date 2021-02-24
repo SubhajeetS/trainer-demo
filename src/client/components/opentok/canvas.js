@@ -27,17 +27,6 @@ export default function getFilteredCanvas(videoEl, canvases, WIDTH = 640, HEIGHT
   return {
     canvas: canvas,
     stop: function stop() {
-      // Stop the video element, the media stream and the animation frame loop
-      videoEl.pause();
-      if (mediaStream.stop) {
-        mediaStream.stop();
-      }
-      if (MediaStreamTrack && MediaStreamTrack.prototype.stop) {
-        // Newer spec
-        mediaStream.getTracks().forEach(function each(track) {
-          track.stop();
-        });
-      }
       cancelAnimationFrame(reqId);
     },
   };
